@@ -1,0 +1,106 @@
+:root { --accent: #10b981; }
+
+.radial{
+  position:relative;
+  padding:20px 28px;
+  color:white;
+  background:var(--accent);
+  border-radius:16px;
+  overflow:visible;
+}
+
+.radial::before, .radial::after {
+  content:"";
+  position:absolute;
+  left:50%; top:50%;
+  transform: translate(-50%, -50%);
+  border-radius:50%;
+  pointer-events:none;
+}
+
+.radial::before{
+  width:120%; height:120%;
+  background: radial-gradient(circle, rgba(255,255,255,0.12), transparent 40%);
+  animation: radialPulse 3s ease-in-out infinite;
+  z-index:0;
+}
+
+.radial::after{
+  width:200%; height:200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.06), transparent 40%);
+  animation: radialPulse 4.5s ease-in-out infinite;
+  z-index:0;
+}
+
+@keyframes radialPulse {
+  0%   { transform: translate(-50%, -50%) scale(.9); opacity:1; }
+  50%  { transform: translate(-50%, -50%) scale(1.03); opacity:.6; }
+  100% { transform: translate(-50%, -50%) scale(.9); opacity:1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radial::before, .radial::after { animation: none; }
+}
+
+
+
+
+
+.shimmer-card{
+  position:relative;
+  padding:18px;
+  border-radius:12px;
+  background:#111; color:white;
+  overflow:hidden;
+}
+
+/* pseudo element로 빛줄기 생성 */
+.shimmer-card::after{
+  content:"";
+  position:absolute;
+  left:-150%;
+  top:0;
+  width:50%;
+  height:100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.25), transparent);
+  transform: skewX(-20deg);
+  animation: shimmer 2.2s linear infinite;
+  pointer-events:none;
+  mix-blend-mode: screen;
+}
+
+@keyframes shimmer {
+  0%   { left:-150%; }
+  60%  { left:150%; }
+  100% { left:150%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-card::after { animation: none; display:none; }
+}
+
+
+
+
+:root { --accent: #a78bfa; --accent2: #3b82f6; }
+
+.wave-bg{
+  color:white;
+  padding:28px;
+  border-radius:12px;
+  background: linear-gradient(120deg, var(--accent), var(--accent2));
+  background-size: 200% 200%;
+  animation: wave 6s ease infinite;
+}
+
+@keyframes wave {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wave-bg { animation: none; }
+}
+
+

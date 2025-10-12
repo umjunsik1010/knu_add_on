@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Interactive Timetable</title>
+  <link rel="stylesheet" href="css/timetable.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topleft">
+      <button id="newBtn">새 시간표</button>
+      <button id="saveBtn">저장</button>
+      <button id="printBtn">인쇄</button>
+      <button id="clearBtn">모두삭제</button>
+    </div>
+    <div style="flex:1"></div>
+    <div class="controls">
+      <div style="color:rgba(255,255,255,.9);font-weight:600">
+        즐거운 경북대학교
+      </div>
+    </div>
+  </div>
+
+  <button class="sidebar-toggle" id="openSidebar">☰</button>
+
+  <aside class="sidebar" id="sidebar">
+    <!-- <h3>과목 선택 창</h3> -->
+    <div id="filterBar">
+      <!-- 전공 -->
+      <div class="filter-section">
+        <button class="filter-toggle">전공 ▾</button>
+        <div class="filter-options">
+          <button class="chip" data-estbl-dprtn-nm="컴퓨터학부 인공지능컴퓨팅전공">컴퓨터학부 인공지능컴퓨팅전공</button>
+          <button class="chip" data-estbl-dprtn-nm="공대">공과대학</button>
+          <button class="chip" data-estbl-dprtn-nm="인문">인문대학</button>
+        </div>
+      </div>
+
+      <!-- 학점 -->
+      <div class="filter-section">
+        <button class="filter-toggle">학점 ▾</button>
+        <div class="filter-options">
+          <button class="chip" data-crdit="1">1학점</button>
+          <button class="chip" data-crdit="2">2학점</button>
+          <button class="chip" data-crdit="3">3학점</button>
+          <button class="chip" data-crdit="4">4학점</button>
+          <button class="chip" data-crdit="5">5학점</button>
+          <button class="chip" data-crdit="6">6학점</button>
+        </div>
+      </div>
+
+      <!-- 학년 -->
+      <div class = "filter-section">
+        <button class="filter-toggle">학년 ▾</button>
+        <div class="filter-options">
+          <button class="chip" data-estbl-grade="1">1학년</button>
+          <button class="chip" data-estbl-grade="2">2학년</button>
+          <button class="chip" data-estbl-grade="3">3학년</button>
+          <button class="chip" data-estbl-grade="4">4학년</button>
+          <button class="chip" data-estbl-grade="5">5학년</button>
+          <button class="chip" data-estbl-grade="6">6학년</button>
+          <button class="chip" data-estbl-grade="*">전학년</button>
+        </div>
+      </div>
+
+      <!-- 종류 -->
+      <div class = "filter-section">
+        <button class="filter-toggle">종류 ▾</button>
+        <div class="filter-options">
+          <button class="chip" data-sbjet-sctnm="전공">전공</button>
+          <button class="chip" data-sbjet-sctnm="교양">교양</button>
+          <button class="chip" data-sbjet-sctnm="전공필수">전공필수</button>
+          <button class="chip" data-sbjet-sctnm="공학전공">공학전공</button>
+          <button class="chip" data-sbjet-sctnm="교직">교직</button>
+          <button class="chip" data-sbjet-sctnm="전공기반">전공기반</button>
+          <button class="chip" data-sbjet-sctnm="융합전공">융합전공</button>
+          <button class="chip" data-sbjet-sctnm="전공심화">전공심화</button>
+          <button class="chip" data-sbjet-sctnm="일반선택">일반선택</button>
+          <button class="chip" data-sbjet-sctnm="기본소양">기본소양</button>
+          <button class="chip" data-sbjet-sctnm="전공기초">전공기초</button>
+          <button class="chip" data-sbjet-sctnm="연계전공">연계전공</button>
+          <button class="chip" data-sbjet-sctnm="기초공통">기초공통</button>
+        </div>
+      </div>
+
+    </div>
+      
+    <div class="subject-list" id="subjectList">
+        <!-- subjects will be inserted here -->
+    </div>
+  </aside>
+
+  <aside id="syllabus-panel">
+    <header>
+      <h2>강의계획서</h2>
+    </header>
+    <div id="syllabus-content"></div>
+  </aside>
+
+  <main class="app">
+    <section class="center">
+      <div class="hint">시 간 표</div>
+      <div class="timetable-wrap" id="timetableWrap">
+        <div class="timetable" id="timetable">
+          <!-- First column: times -->
+          <div class="timecol" id="timecol">
+            <div style="height:18px"></div>
+          </div>
+          <!-- Days -->
+          <div class="daycol" data-day="mon"><div class="dayhead">월</div></div>
+          <div class="daycol" data-day="tue"><div class="dayhead">화</div></div>
+          <div class="daycol" data-day="wed"><div class="dayhead">수</div></div>
+          <div class="daycol" data-day="thu"><div class="dayhead">목</div></div>
+          <div class="daycol" data-day="fri"><div class="dayhead">금</div></div>
+          <div class="daycol" data-day="sat"><div class="dayhead">토</div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/timetable.js"></script>
+</body>
+</html>
