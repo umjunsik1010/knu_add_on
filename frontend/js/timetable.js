@@ -356,7 +356,11 @@ function renderNextSubjects() {
       document.querySelectorAll('.overlay-block').forEach(l => l.remove());
       syllabus.classList.remove('open');
 
+
+      console.log(s.niceTime, isTimeOverlap(s.niceTime));
+
       if(subInside.crseNo.has(s.crseNo)) alert('이미 시간표에 저장된 과목입니다.');
+      else if(isTimeOverlap(s.niceTime)) alert('이미 저장된 시간표의 시간과 겹칩니다.');
       else createSubjectBlock(s);
 
       // if(s.niceTime){
@@ -629,6 +633,42 @@ function createTimeOverlay(yoil, strtime, totaltime, id='') {
 
 
 
+// 과목 추가할 때 기존 시간과 겹쳐짐 여부
+function isTimeOverlap(nicetime){
+  const niceTimeArr = nicetime.split(",<br>");
+  let isOverlap = false;
+
+  niceTimeArr.some(t => {
+    let matcher = { '월': 'mon', '화': 'tue', '수': 'wed', '목': 'thu', '금': 'fri', '토': 'sat'};
+    let yoil = matcher[t[0]];
+
+    let strtime = t.slice(2,7);
+    let endtime = t.slice(10, 15);
+
+    let totaltime = t[18]*2;
+    if(t.slice(22, 24) == 30) totaltime += 1;
+
+    const timeRngArr = subInside.time[yoil];
+
+    timeRngArr.some(timeInside => {
+      let strtimeRng = timeInside.slice(0,5);
+      let endtimeRng = timeInside.slice(6,11);
+
+      if(   !((endtime <= strtimeRng) || (strtime >= endtimeRng))  ){
+        isOverlap = true;
+        return true;
+      }
+
+    })
+
+    return isOverlap;
+
+  })
+
+  return isOverlap;
+
+}
+
 
 // 시간표에 추가된 과목 시간 누적 함수
 // -> subInside.time 용
@@ -669,7 +709,7 @@ function saveTimebyNicetime(niceTime){
         var strtimeRng2 = timeRngArr[i+1].slice(0,5);
         var endtimeRng2 = timeRngArr[i+1].slice(6, 11);
 
-        // 읽을 수 있다면 읽어봐라.
+
         if(endtimeRng1 < strtime && strtimeRng2 > endtime) {
           subInside.time[yoil][i] = strtimeRng1 + '~' + endtimeRng2;
           subInside.time[yoil].splice(i+1, 1);
