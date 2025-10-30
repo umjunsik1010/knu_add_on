@@ -356,9 +356,6 @@ function renderNextSubjects() {
       document.querySelectorAll('.overlay-block').forEach(l => l.remove());
       syllabus.classList.remove('open');
 
-
-      console.log(s.niceTime, isTimeOverlap(s.niceTime));
-
       if(subInside.crseNo.has(s.crseNo)) alert('이미 시간표에 저장된 과목입니다.');
       else if(isTimeOverlap(s.niceTime)) alert('이미 저장된 시간표의 시간과 겹칩니다.');
       else createSubjectBlock(s);
@@ -645,14 +642,11 @@ function isTimeOverlap(nicetime){
     let strtime = t.slice(2,7);
     let endtime = t.slice(10, 15);
 
-    let totaltime = t[18]*2;
-    if(t.slice(22, 24) == 30) totaltime += 1;
-
     const timeRngArr = subInside.time[yoil];
 
     timeRngArr.some(timeInside => {
-      let strtimeRng = timeInside.slice(0,5);
-      let endtimeRng = timeInside.slice(6,11);
+      let strtimeRng = timeInside[0];
+      let endtimeRng = timeInside[1];
 
       if(   !((endtime <= strtimeRng) || (strtime >= endtimeRng))  ){
         isOverlap = true;
@@ -678,85 +672,46 @@ function saveTimebyNicetime(niceTime){
 
     let matcher = { '월': 'mon', '화': 'tue', '수': 'wed', '목': 'thu', '금': 'fri', '토': 'sat'};
     let yoil = matcher[t[0]];
+    
+    const timeRngArr = subInside.time[yoil];
 
     let strtime = t.slice(2,7);
     let endtime = t.slice(10, 15);
+    let rng = [strtime, endtime];
+    
+    if(timeRngArr.includes(rng)) return false;
 
-    let totaltime = t[18]*2;
-    if(t.slice(22, 24) == 30) totaltime += 1;
-
-    const timeRngArr = subInside.time[yoil];
-
-    if(timeRngArr.includes(strtime+'~'+endtime)) return false;
-
-    if(!timeRngArr.length) subInside.time[yoil].push(strtime+'~'+endtime);
-    else if(timeRngArr.length == 1) {
-      let strtimeRng = timeRngArr[0].slice(0,5);
-      let endtimeRng = timeRngArr[0].slice(6,11);
-      
-      if(strtime > endtimeRng || endtime < strtimeRng) subInside.time[yoil].push(strtime + '~' + endtime)
-      else { 
-        if(strtime < strtimeRng) subInside.time[yoil][0] = strtime + '~' + endtimeRng;
-        if(endtime > endtimeRng) subInside.time[yoil][0] = strtimeRng + '~' + endtime;
-      }
-    }
-    else {
-      let isDone = false;
-
-      for(let i=0; i<timeRngArr.length-1; i++){
-        var strtimeRng1 = timeRngArr[i].slice(0,5);
-        var endtimeRng1 = timeRngArr[i].slice(6, 11);
-        var strtimeRng2 = timeRngArr[i+1].slice(0,5);
-        var endtimeRng2 = timeRngArr[i+1].slice(6, 11);
+    subInside.time[yoil].push(rng);
+    if(timeRngArr.length == 1) return false;
 
 
-        if(endtimeRng1 < strtime && strtimeRng2 > endtime) {
-          subInside.time[yoil][i] = strtimeRng1 + '~' + endtimeRng2;
-          subInside.time[yoil].splice(i+1, 1);
-        } else if(strtime <= strtimeRng1 && endtime >= endtimeRng2) {
-          subInside.time[yoil].push(strtime + '~' + endtime);
-          subInside.time[yoil].splice(i, 2);
-        } else if(strtime <= strtimeRng1 && endtime >= endtimeRng1) {
-          subInside.time[yoil][i] = strtime + '~' + endtime;
-        } else if(strtime <= strtimeRng2 && endtime >= endtimeRng2) {
-          subInside.time[yoil][i+1] = strtime + '~' + endtime;
-        } else if(endtime >= strtimeRng1 && strtime <= strtimeRng1) {
-          subInside.time[yoil][i] = strtime + '~' + endtimeRng1;
-        } else if(strtime <= endtimeRng1 && endtime >= endtimeRng1) {
-          subInside.time[yoil][i] = strtimeRng1 + '~' + endtime;
-        } else if(strtime <= strtimeRng2 && endtime >= strtimeRng2) {
-          subInside.time[yoil][i+1] = strtime + '~' + endtimeRng2;
-        } else if(strtime <= endtimeRng2 && endtime >= endtimeRng2) {
-          subInside.time[yoil][i+1] = strtimeRng2 + '~' + endtime;
-        } else if(strtimeRng1 <= strtime && endtime <= endtimeRng1) {
-          isDone = true;
-          break;
-        } else if(strtimeRng2 <= strtime && endtime <= endtimeRng2) {
-          isDone = true;
-          break;
-        } else {
-          continue;
-        }
-        isDone = true;
-        break;
-      }
-
-      if(!isDone) subInside.time[yoil].push(strtime + '~' + endtime);
-      console.log(isDone);
-    }
-
-    // 정렬
-    if(subInside.time[yoil].length > 1){
-      subInside.time[yoil].sort((a, b) => {
-        const [aStart] = a.split('~');
-        const [bStart] = b.split('~');
-
-        const [aH, aM] = aStart.split(':').map(Number);
-        const [bH, bM] = bStart.split(':').map(Number);
+    subInside.time[yoil].sort((a, b) => {
+        const [aH, aM] = a[0].split(':').map(Number);
+        const [bH, bM] = b[0].split(':').map(Number);
 
         return (aH * 60 + aM) - (bH * 60 + bM);
       });
+    let merged = [subInside.time[yoil][0]];
+
+    for(let i=1; i<subInside.time[yoil].length; i++){
+      let [start, end] = subInside.time[yoil][i];
+      let last = merged[merged.length - 1];
+
+      if(start <= last[1] ) {
+        const [ah, am] = last[1].split(':').map(Number);
+        const [bh, bm] = end.split(':').map(Number);
+
+        if(ah * 60 + am > bh * 60 + bm) continue;
+        else last[1] = end;
+
+        // last[1] = Math.max(last[1], end);
+      } else {
+        merged.push([start, end]);
+      }
     }
+
+    subInside.time[yoil] = merged;
+
   });
 
 }
@@ -797,16 +752,17 @@ function createSubjectBlock(sub){
       <div class="subject-block-title">${sub.sbjetNm}</div>
       <div class="subject-block-detail">${sub.lctrmInfo}&nbsp${sub.rmnmCd}호<br><br>${sub.niceTime}</div>
     `;
-    
-    subInside.crseNo.add(sub.crseNo);
-    saveTimebyNicetime(sub.niceTime);
+
+    block.addEventListener('click', () => {
+      
+    });
     
     dayCols.appendChild(block);
-
-    console.log(subInside);
-
     block.classList.add('drop');
   });
+
+  subInside.crseNo.add(sub.crseNo);
+  saveTimebyNicetime(sub.niceTime);
 }
 
 
