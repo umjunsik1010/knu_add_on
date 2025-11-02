@@ -28,9 +28,6 @@ app.get('/timetable', (req, res) =>
 app.get('/gradecal', (req, res) =>
   res.sendFile(path.join(__dirname, '../frontend', 'gradecal.html'))
 );
-app.get('/dongari', (req, res) =>
-  res.sendFile(path.join(__dirname, '../frontend', 'dongari.html'))
-);
 
 
 // 수업계획표 json API
