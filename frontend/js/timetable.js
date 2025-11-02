@@ -186,8 +186,11 @@ const subjectList = document.getElementById('subjectList');
 const timetable = document.getElementById('timetable');
 const timetableWrap = document.getElementById('timetableWrap');
 const timecol = document.getElementById('timecol');
-const syllabus    = document.getElementById('syllabus-panel');
+const syllabus = document.getElementById('syllabus-panel');
 const syllabusContent  = document.getElementById('syllabus-content');
+const syllabusCloseBtn = document.getElementById('close-syllabus');
+
+syllabusCloseBtn.addEventListener('click', () => syllabus.classList.toggle('open'));
 
 // 시간표에 드간 과목
 const subInside = {
@@ -198,6 +201,7 @@ const subInside = {
 
 
 let selectedSubject = null;
+let selectedSubBlock = null;
 let lessonIdCounter = 1;
 
 
@@ -340,16 +344,12 @@ function renderNextSubjects() {
 
     // 강의계획서 버튼
     elBack.querySelector('.back-btn:nth-child(1)').addEventListener('click', () => {
-      if(syllabus.classList.contains('open')) syllabus.classList.remove('open');
-      else syllabus.classList.add('open');
+      syllabus.classList.toggle('open');
     });
 
 
     // 확정 버튼
     elBack.querySelector('.back-btn:nth-child(2)').addEventListener('click', () => {
-      if(syllabus.classList.contains('open')) syllabus.classList.remove('open');
-      else syllabus.classList.add('open');
-
       selectedSubject = null;
       card.classList.toggle('flip');
 
@@ -412,7 +412,7 @@ function buildGrid(){
         const slot = document.createElement('div');
         slot.className='slot';
         slot.dataset.time = `${String(h).padStart(2,'0')}:${half===0?'00':'30'}`;
-        slot.addEventListener('click',(ev)=>onCellClick(ev, col));
+        // slot.addEventListener('click',(ev)=>onCellClick(ev, col));
         col.appendChild(slot);
       }
     }
@@ -421,10 +421,10 @@ function buildGrid(){
 
 
 /* 클릭 시 과목 배치 (추가 구현 가능) */
-function onCellClick(ev, col){
-  if(!selectedSubject) return;
-  alert(`${selectedSubject.name} (${selectedSubject.teacher}) 선택됨 - ${col.dataset.day} ${ev.currentTarget.dataset.time} 클릭`);
-}
+// function onCellClick(ev, col){
+//   if(!selectedSubject) return;
+//   alert(`${selectedSubject.name} (${selectedSubject.teacher}) 선택됨 - ${col.dataset.day} ${ev.currentTarget.dataset.time} 클릭`);
+// }
 
 /* sidebar toggle */
 openBtn.addEventListener('click',()=>{ 
@@ -754,11 +754,40 @@ function createSubjectBlock(sub){
     `;
 
     block.addEventListener('click', () => {
+
+      document.querySelectorAll('.subject-block-btn-wrap').forEach(l => l.remove());
       
+      if(sub.crseNo == selectedSubBlock){
+        selectedSubBlock = null;
+        return
+      }
+      
+      selectedSubBlock = sub.crseNo;
+
+      const blockBtns = document.createElement('div');
+      blockBtns.className = "subject-block-btn-wrap";
+      blockBtns.innerHTML = `
+        <div class="subject-block-btn">강의계획서</div>
+        <div class="subject-block-btn">취소</div>
+      `;
+
+      // 강의계획서 버튼
+      blockBtns.querySelector('.subject-block-btn:nth-child(1)').addEventListener('click', (e) => {
+        const gehwekData = loadSubGehwek({estblYear:sub.estblYear, estblSmstrSctcd:sub.estblSmstrSctcd, sbjetCd:sub.sbjetCd, sbjetDvnno:sub.sbjetDvnno});
+        gehwekData.then(result => {
+          buildContent(result.data, `rgba(${hexColor2rgb(sub.color)}, 0.34)`);
+        });
+        syllabus.scrollTop = 0;
+        syllabus.classList.toggle('open');
+      });
+      
+
+      block.appendChild(blockBtns);
+      setTimeout(() => blockBtns.classList.toggle('open'), 1);
     });
     
     dayCols.appendChild(block);
-    block.classList.add('drop');
+    block.classList.toggle('drop');
   });
 
   subInside.crseNo.add(sub.crseNo);
