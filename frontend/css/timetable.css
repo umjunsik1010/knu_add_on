@@ -348,9 +348,10 @@ body{
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.212);
   padding: 6px;
   min-width: 140px;
+  max-width: 300px;
   z-index: 20;
 }
 
@@ -545,6 +546,17 @@ body{
   font-size: 0.8rem;    /* 세부정보 작게 */
   font-weight: 400;
   opacity: 0.9;
+}
+
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  padding: 10px;
+  outline: none;
+  width: 300px;
 }
 
 

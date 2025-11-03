@@ -189,6 +189,7 @@ const timecol = document.getElementById('timecol');
 const syllabus = document.getElementById('syllabus-panel');
 const syllabusContent  = document.getElementById('syllabus-content');
 const syllabusCloseBtn = document.getElementById('close-syllabus');
+const searchInput = document.getElementById('search-input');
 
 syllabusCloseBtn.addEventListener('click', () => syllabus.classList.toggle('open'));
 
@@ -251,7 +252,7 @@ let loadedCount = 0; // 현재 로드된 과목 수
 function renderNextSubjects() {
   let sub;
 
-  if(filters.estblDprtnNm.length > 1 || filters.crdit.size > 0 || filters.estblGrade.size > 0 || filters.sbjetSctnm.size > 0) {
+  if(filters.estblDprtnNm.length > 1 || filters.crdit.size > 0 || filters.estblGrade.size > 0 || filters.sbjetSctnm.size > 0 || filters.sbjetNm.length > 1) {
     sub = filtered_SUBJECTS;
   } else {
     sub = SUBJECTS;
@@ -459,6 +460,7 @@ const filters = {
   crdit: new Set(),   // 학점 : Set (다중 선택)
   estblGrade: new Set(),  // 학년
   sbjetSctnm: new Set(),  // 종류
+  sbjetNm: '', // 과목 이름
 };
 
 // 칩 선택 시 기존 필터 로직 재사용
@@ -467,7 +469,7 @@ document.querySelectorAll('.filter-options .chip').forEach(chip => {
     const key = chip.dataset.estblDprtnNm ? 'estblDprtnNm' :
                 chip.dataset.crdit ? 'crdit' : 
                 chip.dataset.estblGrade ? 'estblGrade' :
-                chip.dataset.sbjetSctnm ? 'sbjetSctnm' : null;
+                chip.dataset.sbjetSctnm ? 'sbjetSctnm' :  null;
     const value = chip.dataset.estblDprtnNm || chip.dataset.crdit || chip.dataset.estblGrade || chip.dataset.sbjetSctnm;
 
     if (!key) return;
@@ -477,6 +479,7 @@ document.querySelectorAll('.filter-options .chip').forEach(chip => {
       filters.estblDprtnNm = (filters.estblDprtnNm === value) ? '' : value;
       document.querySelectorAll('[data-estbl-dprtn-nm]').forEach(c => c.classList.remove('active'));
       if (filters.estblDprtnNm) chip.classList.add('active');
+      // 원래 전공 검색인데 지금 안 씀, 추후 작성하기
       else chip.classList.remove('active');
     } else if (key === 'crdit') {
       if (filters.crdit.has(value)) {
@@ -502,7 +505,7 @@ document.querySelectorAll('.filter-options .chip').forEach(chip => {
         filters.sbjetSctnm.add(value);
         chip.classList.add('active');
       }
-    }
+    } 
     applyFilters();
   });
 });
@@ -528,9 +531,10 @@ function applyFilters() {
     if (filters.estblGrade.size > 0 && !filters.estblGrade.has(String(s.estblGrade))) return false;
 
     // 종류 필터
-    if (filters.sbjetSctnm.size > 0 && !filters.sbjetSctnm.has(String(s.sbjetSctnm))) return false
+    if (filters.sbjetSctnm.size > 0 && !filters.sbjetSctnm.has(String(s.sbjetSctnm))) return false;
 
-    // (필요 시 다른 조건 추가)
+    // 과목 이름 필터
+    if (filters.sbjetNm && s.sbjetNm !== filters.sbjetNm) return false;
 
     return true;
   });
@@ -838,8 +842,26 @@ function buildContent(data, color) {
 }
 
 
+// 과목 이름으로 검색 기능
+searchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const query = searchInput.value.trim();
+    if (query) performSearch(query);
+  }
+});
+
+searchInput.addEventListener('search', () => {
+  filters.sbjetNm = '';
+  applyFilters();
+});
 
 
+function performSearch(query) {
+  console.log('검색 실행:', query);
+  filters.sbjetNm = query;
+  applyFilters();
+}
 
 /* init */
 loadSubjects();
