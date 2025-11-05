@@ -91,7 +91,7 @@ body{
   top:64px;
   bottom:0;
   width:var(--sidebar-width);
-  max-width:370px;
+  max-width:420px;
   background:#f8fafc;
   padding:18px;
   border-right:1px solid rgba(15,23,42,.04);
@@ -560,6 +560,37 @@ body{
   width: 300px;
 }
 
+#suggestion-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 360px;
+  overflow-y: auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.highlight {
+  color: #3b82f6;
+  font-weight: bold;
+}
+#suggestion-list li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#suggestion-list li:hover {
+  background: #f0f0f0;
+}
 
 /* background:white;
 padding:16px;

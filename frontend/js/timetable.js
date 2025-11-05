@@ -190,6 +190,7 @@ const syllabus = document.getElementById('syllabus-panel');
 const syllabusContent  = document.getElementById('syllabus-content');
 const syllabusCloseBtn = document.getElementById('close-syllabus');
 const searchInput = document.getElementById('search-input');
+const suggestList = document.getElementById('suggestion-list');
 
 syllabusCloseBtn.addEventListener('click', () => syllabus.classList.toggle('open'));
 
@@ -252,7 +253,7 @@ let loadedCount = 0; // 현재 로드된 과목 수
 function renderNextSubjects() {
   let sub;
 
-  if(filters.estblDprtnNm.length > 1 || filters.crdit.size > 0 || filters.estblGrade.size > 0 || filters.sbjetSctnm.size > 0 || filters.sbjetNm.length > 1) {
+  if(filters.estblDprtnNm.length > 1 || filters.crdit.size > 0 || filters.estblGrade.size > 0 || filters.sbjetSctnm.size > 0 || filters.sbjetNm.length > 0) {
     sub = filtered_SUBJECTS;
   } else {
     sub = SUBJECTS;
@@ -512,7 +513,7 @@ document.querySelectorAll('.filter-options .chip').forEach(chip => {
 
 // 바깥 클릭 시 닫기
 document.addEventListener('click', e => {
-  if (!e.target.closest('.filter-section')) {
+  if (!e.target.closest('.filter-section') && e.target.tagName !== 'LI') {
     document.querySelectorAll('.filter-options.open').forEach(o => o.classList.remove('open'));
   }
 });
@@ -534,7 +535,7 @@ function applyFilters() {
     if (filters.sbjetSctnm.size > 0 && !filters.sbjetSctnm.has(String(s.sbjetSctnm))) return false;
 
     // 과목 이름 필터
-    if (filters.sbjetNm && s.sbjetNm !== filters.sbjetNm) return false;
+    if (filters.sbjetNm && !s.sbjetNm.includes(filters.sbjetNm)) return false;
 
     return true;
   });
@@ -848,6 +849,10 @@ searchInput.addEventListener('keydown', (e) => {
     e.preventDefault();
     const query = searchInput.value.trim();
     if (query) performSearch(query);
+    else {
+      filters.sbjetNm = '';
+      applyFilters();
+    }
   }
 });
 
@@ -856,6 +861,34 @@ searchInput.addEventListener('search', () => {
   applyFilters();
 });
 
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.trim();
+  suggestList.innerHTML = ``;
+
+  if(query < 1) return;
+
+  const matchedSubNms = [... new Set(SUBJECTS.map(s => s.sbjetNm))] 
+    .filter(sbnm => sbnm.includes(query))
+    .sort((a,b) => a.indexOf(query) - b.indexOf(query));
+
+  matchedSubNms.forEach(sbnm =>{
+    const li = document.createElement('li');
+
+    const regex = new RegExp(`(${query})`, "gi");
+    const highlighted = sbnm.replace(regex, `<span class="highlight">$1</span>`);
+    li.innerHTML = highlighted;
+
+    li.addEventListener('click', () => {
+      searchInput.value = sbnm;
+      suggestList.innerHTML = ``;
+
+      performSearch(sbnm);
+    });
+
+    suggestList.appendChild(li);
+  });
+
+})
 
 function performSearch(query) {
   console.log('검색 실행:', query);
