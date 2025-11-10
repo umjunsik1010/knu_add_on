@@ -721,6 +721,42 @@ function saveTimebyNicetime(niceTime){
 
 }
 
+// 시간표에 저장된 시간 제거 함수
+function removeSub(sub){
+  document.querySelectorAll(`[data-id="${sub.crseNo} Block"]`).forEach(l => l.remove());
+
+  subInside.crseNo.delete(sub.crseNo);
+
+  const niceTimeArr = sub.niceTime.split(",<br>");
+  niceTimeArr.some(t => {
+    let matcher = { '월': 'mon', '화': 'tue', '수': 'wed', '목': 'thu', '금': 'fri', '토': 'sat'};
+    let yoil = matcher[t[0]];
+    
+    const timeRngArr = subInside.time[yoil];
+
+    let strtime = t.slice(2,7);
+    let endtime = t.slice(10, 15);
+
+
+    for(let i=0; i<timeRngArr.length; i++){
+      let tRng = timeRngArr[i];
+
+      if(tRng[0] <= strtime && endtime <= tRng[1]) {
+        var firstRng = [tRng[0], strtime];
+        var lastRng = [endtime, tRng[1]];
+        subInside.time[yoil].splice(i, 1);
+        break;
+      }
+    }
+
+    if(firstRng[0] != firstRng[1]) subInside.time[yoil].push(firstRng);
+    if(lastRng[0] != lastRng[1]) subInside.time[yoil].push(lastRng);
+
+  });
+  
+  
+}
+
 
 // 수업 블록 생성
 function createSubjectBlock(sub){
@@ -743,7 +779,7 @@ function createSubjectBlock(sub){
     
     const block = document.createElement('div');
     block.classList.add('subject-block');
-    block.dataset.id = `${sub.id}Block`;
+    block.dataset.id = `${sub.crseNo} Block`;
 
     block.style.width  = `${wid}px`;
     block.style.height = `${SLOT_HEIGHT*totaltime}px`;
@@ -758,7 +794,7 @@ function createSubjectBlock(sub){
       <div class="subject-block-detail">${sub.lctrmInfo}&nbsp${sub.rmnmCd}호<br><br>${sub.niceTime}</div>
     `;
 
-    block.addEventListener('click', () => {
+    block.addEventListener('click', (event) => {
 
       document.querySelectorAll('.subject-block-btn-wrap').forEach(l => l.remove());
       
@@ -775,9 +811,9 @@ function createSubjectBlock(sub){
         <div class="subject-block-btn">강의계획서</div>
         <div class="subject-block-btn">취소</div>
       `;
-
+      
       // 강의계획서 버튼
-      blockBtns.querySelector('.subject-block-btn:nth-child(1)').addEventListener('click', (e) => {
+      blockBtns.querySelector('.subject-block-btn:nth-child(1)').addEventListener('click', () => {
         const gehwekData = loadSubGehwek({estblYear:sub.estblYear, estblSmstrSctcd:sub.estblSmstrSctcd, sbjetCd:sub.sbjetCd, sbjetDvnno:sub.sbjetDvnno});
         gehwekData.then(result => {
           buildContent(result.data, `rgba(${hexColor2rgb(sub.color)}, 0.34)`);
@@ -785,10 +821,15 @@ function createSubjectBlock(sub){
         syllabus.scrollTop = 0;
         syllabus.classList.toggle('open');
       });
+
+      // 취소 버튼
+      blockBtns.querySelector('.subject-block-btn:nth-child(2)').addEventListener('click', (e) => {
+        removeSub(sub);        
+      });
       
 
       block.appendChild(blockBtns);
-      setTimeout(() => blockBtns.classList.toggle('open'), 1);
+      setTimeout(() => blockBtns.classList.toggle('open'), 2);
     });
     
     dayCols.appendChild(block);
