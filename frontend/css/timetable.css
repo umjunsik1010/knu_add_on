@@ -27,8 +27,8 @@ body{
 .topbar{
   height:64px;
   display:flex;
-  position: absolute;
-  width: 97.5%;   /* 이거 환경에 따라 크기가 박음.*/
+  position: fixed;
+  top:0;left:0;right:0;
   z-index: 999;
   align-items:center;
   gap:12px;
@@ -55,6 +55,7 @@ body{
 
 /* Layout */
 .app{
+  padding-top:64px;
   display:flex;
   min-height:calc(100% - 64px);
   align-items:flex-start;

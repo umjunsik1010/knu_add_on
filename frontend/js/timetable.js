@@ -190,6 +190,7 @@ const syllabus = document.getElementById('syllabus-panel');
 const syllabusContent  = document.getElementById('syllabus-content');
 const syllabusCloseBtn = document.getElementById('close-syllabus');
 const searchInput = document.getElementById('search-input');
+const overlapTimecheck=document.getElementById('overlapTimeCheck');
 
 syllabusCloseBtn.addEventListener('click', () => syllabus.classList.toggle('open'));
 
@@ -252,7 +253,7 @@ let loadedCount = 0; // 현재 로드된 과목 수
 function renderNextSubjects() {
   let sub;
 
-  if(filters.estblDprtnNm.length > 1 || filters.crdit.size > 0 || filters.estblGrade.size > 0 || filters.sbjetSctnm.size > 0 || filters.sbjetNm.length > 1) {
+  if(filters.estblDprtnNm.length > 1 || filters.crdit.size > 0 || filters.estblGrade.size > 0 || filters.sbjetSctnm.size > 0 || filters.sbjetNm.length > 1 || filters.overlapBlock) {
     sub = filtered_SUBJECTS;
   } else {
     sub = SUBJECTS;
@@ -359,7 +360,11 @@ function renderNextSubjects() {
 
       if(subInside.crseNo.has(s.crseNo)) alert('이미 시간표에 저장된 과목입니다.');
       else if(isTimeOverlap(s.niceTime)) alert('이미 저장된 시간표의 시간과 겹칩니다.');
-      else createSubjectBlock(s);
+      else {
+        createSubjectBlock(s);
+        //추가 직후, 시간 중복 체크 모드면 필터링
+        if (filters.overlapBlock) applyFilters();
+      }
 
       // if(s.niceTime){
       //   const niceTimeArr = s.niceTime.split(",<br>");
@@ -461,6 +466,7 @@ const filters = {
   estblGrade: new Set(),  // 학년
   sbjetSctnm: new Set(),  // 종류
   sbjetNm: '', // 과목 이름
+  overlapBlock: false, //시간 중복
 };
 
 // 칩 선택 시 기존 필터 로직 재사용
@@ -534,7 +540,10 @@ function applyFilters() {
     if (filters.sbjetSctnm.size > 0 && !filters.sbjetSctnm.has(String(s.sbjetSctnm))) return false;
 
     // 과목 이름 필터
-    if (filters.sbjetNm && s.sbjetNm !== filters.sbjetNm) return false;
+    if (filters.sbjetNm && !s.sbjetNm.includes(filters.sbjetNm)) return false;
+
+    // 시간 중복 필터
+    if (filters.overlapBlock && s.niceTime && isTimeOverlap(s.niceTime)) return false;
 
     return true;
   });
@@ -862,6 +871,11 @@ function performSearch(query) {
   filters.sbjetNm = query;
   applyFilters();
 }
+
+overlapTimecheck.addEventListener('change',e=>{
+  filters.overlapBlock = e.target.checked;
+  applyFilters();
+});
 
 /* init */
 loadSubjects();
