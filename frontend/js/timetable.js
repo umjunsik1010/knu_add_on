@@ -92,7 +92,7 @@ const makeTimeNice = (realtimeinfo) => {
 
   arr.push('end');
   for(let i=0; i<arr.length-1; i++) {
-    if(arr[i].slice(10, 15) == arr[i+1].slice(2, 7)) {
+    if(arr[i].slice(10, 15) == arr[i+1].slice(2, 7) && arr[i][0] == arr[i+1][0]) {
       tmpTime = tmpTime.slice(0, 10) + arr[i+1].slice(10, 15);
       continue;
     } else {
@@ -424,6 +424,8 @@ function buildGrid(){
       }
     }
   })
+
+  addSubsByLocalStorage();
 }
 
 
@@ -735,6 +737,7 @@ function removeSub(sub){
   document.querySelectorAll(`[data-id="${sub.crseNo} Block"]`).forEach(l => l.remove());
 
   subInside.crseNo.delete(sub.crseNo);
+  updateSub2LocalStorage();
 
   const niceTimeArr = sub.niceTime.split(",<br>");
   niceTimeArr.some(t => {
@@ -829,15 +832,25 @@ function createSubjectBlock(sub){
         });
         syllabus.scrollTop = 0;
         syllabus.classList.toggle('open');
+
+        selectedSubBlock = null;
+        document.querySelectorAll('.subject-block-btn-wrap').forEach(l => l.remove());
       });
 
       // 취소 버튼
       blockBtns.querySelector('.subject-block-btn:nth-child(2)').addEventListener('click', (e) => {
-        removeSub(sub);        
+        removeSub(sub);
+
+        selectedSubBlock = null;
+        document.querySelectorAll('.subject-block-btn-wrap').forEach(l => l.remove());
       });
       
+      const {left:x, top:y, width:wid, height:hei} = getRelativePos(block, dayCols);
+      
+      blockBtns.style.left = `${x}px`;
+      blockBtns.style.top = `${y}px`;
 
-      block.appendChild(blockBtns);
+      dayCols.appendChild(blockBtns);
       setTimeout(() => blockBtns.classList.toggle('open'), 2);
     });
     
@@ -847,10 +860,14 @@ function createSubjectBlock(sub){
 
   subInside.crseNo.add(sub.crseNo);
   saveTimebyNicetime(sub.niceTime);
+  updateSub2LocalStorage();
 }
 
 
-
+function updateSub2LocalStorage() {
+  console.log(JSON.stringify([...subInside.crseNo]));
+  localStorage.setItem('subjects', JSON.stringify([...subInside.crseNo]));
+}
 
 
 
@@ -951,9 +968,28 @@ overlapTimecheck.addEventListener('change',e=>{
   applyFilters();
 });
 
+
+
+function addSubsByLocalStorage() {
+  const subs = JSON.parse(localStorage.getItem('subjects'));
+  
+  console.log(subs);
+
+  subs.forEach(subId => {
+    SUBJECTS.some(sub => {
+      if(sub.crseNo == subId) {
+        createSubjectBlock(sub);
+        return false;
+      }
+    });
+  });
+
+}
+
 /* init */
 loadSubjects();
 buildGrid();
+setTimeout(() => addSubsByLocalStorage(), 200);
 
 
 
