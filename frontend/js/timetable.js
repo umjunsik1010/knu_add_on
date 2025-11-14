@@ -1,3 +1,5 @@
+import html2canvas from "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm";
+
 const H_START = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hours-start')) || 8;
 const H_END = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hours-end')) || 24;
 const SLOT_MINUTES = 30; // 30-minute slots
@@ -183,6 +185,8 @@ async function loadSubGehwek(sub) {
 const sidebar = document.getElementById('sidebar');
 const openBtn = document.getElementById('openSidebar');
 const subjectList = document.getElementById('subjectList');
+const saveBtn = document.getElementById('saveBtn');
+const clearBtn = document.getElementById('clearBtn');
 const timetable = document.getElementById('timetable');
 const timetableWrap = document.getElementById('timetableWrap');
 const timecol = document.getElementById('timecol');
@@ -190,10 +194,39 @@ const syllabus = document.getElementById('syllabus-panel');
 const syllabusContent  = document.getElementById('syllabus-content');
 const syllabusCloseBtn = document.getElementById('close-syllabus');
 const searchInput = document.getElementById('search-input');
-const overlapTimecheck=document.getElementById('overlapTimeCheck');
+const overlapTimecheck = document.getElementById('overlapTimeCheck');
 const suggestList = document.getElementById('suggestion-list');
 
 syllabusCloseBtn.addEventListener('click', () => syllabus.classList.toggle('open'));
+
+
+// topbar 버튼들
+
+// 사진으로 저장 버튼
+saveBtn.addEventListener('click', () => {
+  html2canvas(document.querySelector("#timetable")).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "timetable.png";
+    link.href = canvas.toDataURL();
+    setTimeout(() => link.click(), 200);
+  });
+});
+
+// 시간표 초기화 버튼
+clearBtn.addEventListener('click', () => {
+  if (confirm("정말 시간표를 초기화하시겠습니까?")) {
+    let subIds = subInside.crseNo;
+
+    subIds.forEach(subId => {
+       SUBJECTS.some(sub => {
+        if(sub.crseNo == subId) {
+          removeSub(sub);
+          return false;
+        }
+      });
+    });
+  }
+});
 
 // 시간표에 드간 과목
 const subInside = {
@@ -771,7 +804,7 @@ function removeSub(sub){
 
 
 // 수업 블록 생성
-function createSubjectBlock(sub){
+function createSubjectBlock(sub, animation = true){
   if(!sub.niceTime) return
 
   const niceTimeArr = sub.niceTime.split(",<br>");
@@ -855,7 +888,7 @@ function createSubjectBlock(sub){
     });
     
     dayCols.appendChild(block);
-    block.classList.toggle('drop');
+    if(animation) block.classList.toggle('drop');
   });
 
   subInside.crseNo.add(sub.crseNo);
@@ -865,7 +898,6 @@ function createSubjectBlock(sub){
 
 
 function updateSub2LocalStorage() {
-  console.log(JSON.stringify([...subInside.crseNo]));
   localStorage.setItem('subjects', JSON.stringify([...subInside.crseNo]));
 }
 
@@ -958,7 +990,6 @@ searchInput.addEventListener('input', () => {
 })
 
 function performSearch(query) {
-  console.log('검색 실행:', query);
   filters.sbjetNm = query;
   applyFilters();
 }
@@ -973,18 +1004,45 @@ overlapTimecheck.addEventListener('change',e=>{
 function addSubsByLocalStorage() {
   const subs = JSON.parse(localStorage.getItem('subjects'));
   
-  console.log(subs);
-
   subs.forEach(subId => {
     SUBJECTS.some(sub => {
       if(sub.crseNo == subId) {
-        createSubjectBlock(sub);
+        createSubjectBlock(sub, false);
         return false;
       }
     });
   });
-
 }
+
+
+function capture() {
+    const canvas = document.getElementById('canvas');
+    var captureImgData = canvas.toDataURL('image/png');
+
+    const imgData = atob(captureImgData.split(",")[1]);
+    const len = imgData.length;
+    const buf = new ArrayBuffer(len); // 버퍼
+    const view = new Uint8Array(buf); // 8bit Unsigned Int
+
+    let blob, i;
+
+    for (i = 0; i < len; i++) {
+        view[i] = imgData.charCodeAt(i) & 0xff; // 비트 마스킹을 msb를 보호한다
+    }
+
+    // Blob 객체를 image/png 타입으로 생성한다. (application/octet-stream도 가능)
+    blob = new Blob([view], { type: "image/png" });
+    const url = window.URL.createObjectURL(blob); // blob:http://localhost:1234/28ff8746-94eb-4dbe-9d6c-2443b581dd30
+
+    var downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = 'capture_coupon.png';
+    downloadLink.click();
+}
+
+
+
+
 
 /* init */
 loadSubjects();
