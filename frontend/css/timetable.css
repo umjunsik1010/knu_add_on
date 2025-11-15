@@ -590,6 +590,10 @@ body{
   color: #3b82f6;
   font-weight: bold;
 }
+.highlight2 {
+  color: #f6803b;
+  font-weight: bold;
+}
 #suggestion-list li {
   padding: 10px;
   cursor: pointer;

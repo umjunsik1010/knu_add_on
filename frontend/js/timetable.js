@@ -574,7 +574,9 @@ function applyFilters() {
     if (filters.sbjetSctnm.size > 0 && !filters.sbjetSctnm.has(String(s.sbjetSctnm))) return false;
 
     // 과목 이름 필터
-    if (filters.sbjetNm && !s.sbjetNm.includes(filters.sbjetNm)) return false;
+    const regex = new RegExp(filters.sbjetNm, "i");
+    if (filters.sbjetNm && !(regex.test(s.sbjetNm) || regex.test(s.totalPrfssNm))) return false;
+    
 
     // 시간 중복 필터
     if (filters.overlapBlock && s.niceTime && isTimeOverlap(s.niceTime)) return false;
@@ -582,7 +584,22 @@ function applyFilters() {
     return true;
   });
 
-  // console.log(filters, result);
+
+  // 과목 이름으로 검색시 정렬
+  if(filters.sbjetNm){
+    result = result.sort((a, b) => {
+      const aName = a.sbjetNm;
+      const bName = b.sbjetNm; 
+
+      const aIndex = aName.indexOf(filters.sbjetNm);
+      const bIndex = bName.indexOf(filters.sbjetNm);
+
+      if(filters.sbjetNm == aName && filters.sbjetNm != bName) return -1;
+      if(filters.sbjetNm != aName && filters.sbjetNm == bName) return 1;
+
+      return aIndex - bIndex;
+    });
+  }
 
   // subjectList 초기화
   subjectList.innerHTML = '';
@@ -953,25 +970,47 @@ searchInput.addEventListener('keydown', (e) => {
   }
 });
 
+// 검색어 초기화
 searchInput.addEventListener('search', () => {
   filters.sbjetNm = '';
   applyFilters();
 });
 
+// 
 searchInput.addEventListener('input', () => {
   const query = searchInput.value.trim();
   suggestList.innerHTML = ``;
+  const regex = new RegExp(`(${query})`, "i");
 
   if(query < 1) return;
 
+  // 과목 이름 일치하는 리스트 생성, 정렬
   const matchedSubNms = [... new Set(SUBJECTS.map(s => s.sbjetNm))] 
-    .filter(sbnm => sbnm.includes(query))
-    .sort((a,b) => a.indexOf(query) - b.indexOf(query));
+    .filter(sbnm => regex.test(sbnm))
+    .sort((a,b) => {
+      const aIndex = a.search(regex);
+      const bIndex = b.search(regex);
+
+      if(query == a && query != b) return -1;
+      if(query != a && query == b) return 1;
+
+      return aIndex - bIndex;
+      
+    });
+
+  // 교수 이름 일치하는 리스트 생성, 정렬
+  const matchedPrfssNm = [... new Set(SUBJECTS.map(s => s.totalPrfssNm))]
+    .filter(prfsnm => regex.test(prfsnm))
+    .sort((a,b) => {
+      const aIndex = a.indexOf(query);
+      const bIndex = b.indexOf(query);
+
+      return aIndex - bIndex;
+  });
 
   matchedSubNms.forEach(sbnm =>{
     const li = document.createElement('li');
 
-    const regex = new RegExp(`(${query})`, "gi");
     const highlighted = sbnm.replace(regex, `<span class="highlight">$1</span>`);
     li.innerHTML = highlighted;
 
@@ -980,6 +1019,22 @@ searchInput.addEventListener('input', () => {
       suggestList.innerHTML = ``;
 
       performSearch(sbnm);
+    });
+
+    suggestList.appendChild(li);
+  });
+
+  matchedPrfssNm.forEach(prfsnm =>{
+    const li = document.createElement('li');
+
+    const highlighted = prfsnm.replace(regex, `<span class="highlight2">$1</span>`);
+    li.innerHTML = highlighted;
+
+    li.addEventListener('click', () => {
+      searchInput.value = prfsnm;
+      suggestList.innerHTML = ``;
+
+      performSearch(prfsnm);
     });
 
     suggestList.appendChild(li);
@@ -1001,8 +1056,6 @@ overlapTimecheck.addEventListener('change',e=>{
 
 function addSubsFromLocalStorage() {
   const subs = JSON.parse(localStorage.getItem('subjects'));
-
-  console.log(subs, SUBJECTS);
   
   subs.forEach(subId => {
     SUBJECTS.some(sub => {
@@ -1015,39 +1068,11 @@ function addSubsFromLocalStorage() {
 }
 
 
-function capture() {
-    const canvas = document.getElementById('canvas');
-    var captureImgData = canvas.toDataURL('image/png');
-
-    const imgData = atob(captureImgData.split(",")[1]);
-    const len = imgData.length;
-    const buf = new ArrayBuffer(len); // 버퍼
-    const view = new Uint8Array(buf); // 8bit Unsigned Int
-
-    let blob, i;
-
-    for (i = 0; i < len; i++) {
-        view[i] = imgData.charCodeAt(i) & 0xff; // 비트 마스킹을 msb를 보호한다
-    }
-
-    // Blob 객체를 image/png 타입으로 생성한다. (application/octet-stream도 가능)
-    blob = new Blob([view], { type: "image/png" });
-    const url = window.URL.createObjectURL(blob); // blob:http://localhost:1234/28ff8746-94eb-4dbe-9d6c-2443b581dd30
-
-    var downloadLink = document.createElement('a');
-    downloadLink.href = url;
-    downloadLink.download = 'capture_coupon.png';
-    downloadLink.click();
-}
-
-
-
 
 
 /* init */
 buildGrid();
 loadLectures().then(() => addSubsFromLocalStorage());
-
 
 
 
