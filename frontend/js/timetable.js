@@ -123,14 +123,12 @@ let SUBJECTS = [];
 let filtered_SUBJECTS = [];
 
 /* load lectures.json */
-async function loadSubjects() {
+async function loadLectures() {
   try {
-    const res = await fetch('./json/lectures.json'); // JSON 파일 경로
-    if (!res.ok) throw new Error('Failed to fetch JSON: ' + res.status);
+    const res = await fetch('/api/lectures');
+    if (!res.ok) throw new Error('Failed to fetch lectures');
+    const lectures = await res.json();
 
-    const lectures = await res.json(); // JSON 파싱
-    // lectures 데이터를 SUBJECTS로 변환 (예시)
-    // JSON 구조에 맞게 적절히 매핑
     SUBJECTS = lectures.map(l => ({
       estblYear: l.estblYear || 'unknown',  // 년도
       estblSmstrSctcd : l.estblSmstrSctcd || 'unknown',   //학기
@@ -151,7 +149,9 @@ async function loadSubjects() {
       niceTime : makeTimeNice(l.lssnsRealTimeInfo),
       color: generateColors(l.totalPrfssNm, l.sbjetNm) || '#3b82f6'
     }));
+
     renderNextSubjects();
+
   } catch (err) {
     console.error(err);
   }
@@ -457,8 +457,6 @@ function buildGrid(){
       }
     }
   })
-
-  addSubsByLocalStorage();
 }
 
 
@@ -1001,8 +999,10 @@ overlapTimecheck.addEventListener('change',e=>{
 
 
 
-function addSubsByLocalStorage() {
+function addSubsFromLocalStorage() {
   const subs = JSON.parse(localStorage.getItem('subjects'));
+
+  console.log(subs, SUBJECTS);
   
   subs.forEach(subId => {
     SUBJECTS.some(sub => {
@@ -1045,9 +1045,8 @@ function capture() {
 
 
 /* init */
-loadSubjects();
 buildGrid();
-setTimeout(() => addSubsByLocalStorage(), 200);
+loadLectures().then(() => addSubsFromLocalStorage());
 
 
 

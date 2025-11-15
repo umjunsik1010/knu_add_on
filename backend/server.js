@@ -3,6 +3,8 @@ const express = require('express');
 const path = require('path');
 const axios = require('axios');
 const cors = require('cors');
+const fs = require('fs/promises');
+
 
 const app = express();
 
@@ -28,6 +30,27 @@ app.get('/timetable', (req, res) =>
 app.get('/gradecal', (req, res) =>
   res.sendFile(path.join(__dirname, '../frontend', 'gradecal.html'))
 );
+
+
+// load lectures
+let lecturesCache = null;
+
+async function loadLectures() {
+  try {
+    const data = await fs.readFile('./json/lectures.json', 'utf-8');
+    lecturesCache = JSON.parse(data);
+  } catch (err) {
+    console.error('Failed to load lectures.json:', err);
+  }
+}
+
+loadLectures();
+
+app.get('/api/lectures', (req, res) => {
+  res.json(lecturesCache);
+});
+
+
 
 
 // 수업계획표 json API
