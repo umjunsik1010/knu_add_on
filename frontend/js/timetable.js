@@ -1,3 +1,5 @@
+import html2canvas from "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm";
+
 const H_START = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hours-start')) || 8;
 const H_END = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hours-end')) || 24;
 const SLOT_MINUTES = 30; // 30-minute slots
@@ -92,7 +94,7 @@ const makeTimeNice = (realtimeinfo) => {
 
   arr.push('end');
   for(let i=0; i<arr.length-1; i++) {
-    if(arr[i].slice(10, 15) == arr[i+1].slice(2, 7)&&arr[i][0]==arr[i+1][0]) {
+    if(arr[i].slice(10, 15) == arr[i+1].slice(2, 7) && arr[i][0] == arr[i+1][0]) {
       tmpTime = tmpTime.slice(0, 10) + arr[i+1].slice(10, 15);
       continue;
     } else {
@@ -121,14 +123,12 @@ let SUBJECTS = [];
 let filtered_SUBJECTS = [];
 
 /* load lectures.json */
-async function loadSubjects() {
+async function loadLectures() {
   try {
-    const res = await fetch('./json/lectures.json'); // JSON 파일 경로
-    if (!res.ok) throw new Error('Failed to fetch JSON: ' + res.status);
+    const res = await fetch('/api/lectures');
+    if (!res.ok) throw new Error('Failed to fetch lectures');
+    const lectures = await res.json();
 
-    const lectures = await res.json(); // JSON 파싱
-    // lectures 데이터를 SUBJECTS로 변환 (예시)
-    // JSON 구조에 맞게 적절히 매핑
     SUBJECTS = lectures.map(l => ({
       estblYear: l.estblYear || 'unknown',  // 년도
       estblSmstrSctcd : l.estblSmstrSctcd || 'unknown',   //학기
@@ -149,7 +149,9 @@ async function loadSubjects() {
       niceTime : makeTimeNice(l.lssnsRealTimeInfo),
       color: generateColors(l.totalPrfssNm, l.sbjetNm) || '#3b82f6'
     }));
+
     renderNextSubjects();
+
   } catch (err) {
     console.error(err);
   }
@@ -183,6 +185,8 @@ async function loadSubGehwek(sub) {
 const sidebar = document.getElementById('sidebar');
 const openBtn = document.getElementById('openSidebar');
 const subjectList = document.getElementById('subjectList');
+const saveBtn = document.getElementById('saveBtn');
+const clearBtn = document.getElementById('clearBtn');
 const timetable = document.getElementById('timetable');
 const timetableWrap = document.getElementById('timetableWrap');
 const timecol = document.getElementById('timecol');
@@ -190,10 +194,39 @@ const syllabus = document.getElementById('syllabus-panel');
 const syllabusContent  = document.getElementById('syllabus-content');
 const syllabusCloseBtn = document.getElementById('close-syllabus');
 const searchInput = document.getElementById('search-input');
-const overlapTimecheck=document.getElementById('overlapTimeCheck');
+const overlapTimecheck = document.getElementById('overlapTimeCheck');
 const suggestList = document.getElementById('suggestion-list');
 
 syllabusCloseBtn.addEventListener('click', () => syllabus.classList.toggle('open'));
+
+
+// topbar 버튼들
+
+// 사진으로 저장 버튼
+saveBtn.addEventListener('click', () => {
+  html2canvas(document.querySelector("#timetable")).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "timetable.png";
+    link.href = canvas.toDataURL();
+    setTimeout(() => link.click(), 200);
+  });
+});
+
+// 시간표 초기화 버튼
+clearBtn.addEventListener('click', () => {
+  if (confirm("정말 시간표를 초기화하시겠습니까?")) {
+    let subIds = subInside.crseNo;
+
+    subIds.forEach(subId => {
+       SUBJECTS.some(sub => {
+        if(sub.crseNo == subId) {
+          removeSub(sub);
+          return false;
+        }
+      });
+    });
+  }
+});
 
 // 시간표에 드간 과목
 const subInside = {
@@ -541,7 +574,9 @@ function applyFilters() {
     if (filters.sbjetSctnm.size > 0 && !filters.sbjetSctnm.has(String(s.sbjetSctnm))) return false;
 
     // 과목 이름 필터
-    if (filters.sbjetNm && !s.sbjetNm.includes(filters.sbjetNm)) return false;
+    const regex = new RegExp(filters.sbjetNm, "i");
+    if (filters.sbjetNm && !(regex.test(s.sbjetNm) || regex.test(s.totalPrfssNm))) return false;
+    
 
     // 시간 중복 필터
     if (filters.overlapBlock && s.niceTime && isTimeOverlap(s.niceTime)) return false;
@@ -549,7 +584,22 @@ function applyFilters() {
     return true;
   });
 
-  // console.log(filters, result);
+
+  // 과목 이름으로 검색시 정렬
+  if(filters.sbjetNm){
+    result = result.sort((a, b) => {
+      const aName = a.sbjetNm;
+      const bName = b.sbjetNm; 
+
+      const aIndex = aName.indexOf(filters.sbjetNm);
+      const bIndex = bName.indexOf(filters.sbjetNm);
+
+      if(filters.sbjetNm == aName && filters.sbjetNm != bName) return -1;
+      if(filters.sbjetNm != aName && filters.sbjetNm == bName) return 1;
+
+      return aIndex - bIndex;
+    });
+  }
 
   // subjectList 초기화
   subjectList.innerHTML = '';
@@ -735,6 +785,7 @@ function removeSub(sub){
   document.querySelectorAll(`[data-id="${sub.crseNo} Block"]`).forEach(l => l.remove());
 
   subInside.crseNo.delete(sub.crseNo);
+  updateSub2LocalStorage();
 
   const niceTimeArr = sub.niceTime.split(",<br>");
   niceTimeArr.some(t => {
@@ -768,7 +819,7 @@ function removeSub(sub){
 
 
 // 수업 블록 생성
-function createSubjectBlock(sub){
+function createSubjectBlock(sub, animation = true){
   if(!sub.niceTime) return
 
   const niceTimeArr = sub.niceTime.split(",<br>");
@@ -829,28 +880,41 @@ function createSubjectBlock(sub){
         });
         syllabus.scrollTop = 0;
         syllabus.classList.toggle('open');
+
+        selectedSubBlock = null;
+        document.querySelectorAll('.subject-block-btn-wrap').forEach(l => l.remove());
       });
 
       // 취소 버튼
       blockBtns.querySelector('.subject-block-btn:nth-child(2)').addEventListener('click', (e) => {
-        removeSub(sub);        
+        removeSub(sub);
+
+        selectedSubBlock = null;
+        document.querySelectorAll('.subject-block-btn-wrap').forEach(l => l.remove());
       });
       
+      const {left:x, top:y, width:wid, height:hei} = getRelativePos(block, dayCols);
+      
+      blockBtns.style.left = `${x}px`;
+      blockBtns.style.top = `${y}px`;
 
-      block.appendChild(blockBtns);
+      dayCols.appendChild(blockBtns);
       setTimeout(() => blockBtns.classList.toggle('open'), 2);
     });
     
     dayCols.appendChild(block);
-    block.classList.toggle('drop');
+    if(animation) block.classList.toggle('drop');
   });
 
   subInside.crseNo.add(sub.crseNo);
   saveTimebyNicetime(sub.niceTime);
+  updateSub2LocalStorage();
 }
 
 
-
+function updateSub2LocalStorage() {
+  localStorage.setItem('subjects', JSON.stringify([...subInside.crseNo]));
+}
 
 
 
@@ -906,25 +970,47 @@ searchInput.addEventListener('keydown', (e) => {
   }
 });
 
+// 검색어 초기화
 searchInput.addEventListener('search', () => {
   filters.sbjetNm = '';
   applyFilters();
 });
 
+// 
 searchInput.addEventListener('input', () => {
   const query = searchInput.value.trim();
   suggestList.innerHTML = ``;
+  const regex = new RegExp(`(${query})`, "i");
 
   if(query < 1) return;
 
+  // 과목 이름 일치하는 리스트 생성, 정렬
   const matchedSubNms = [... new Set(SUBJECTS.map(s => s.sbjetNm))] 
-    .filter(sbnm => sbnm.includes(query))
-    .sort((a,b) => a.indexOf(query) - b.indexOf(query));
+    .filter(sbnm => regex.test(sbnm))
+    .sort((a,b) => {
+      const aIndex = a.search(regex);
+      const bIndex = b.search(regex);
+
+      if(query == a && query != b) return -1;
+      if(query != a && query == b) return 1;
+
+      return aIndex - bIndex;
+      
+    });
+
+  // 교수 이름 일치하는 리스트 생성, 정렬
+  const matchedPrfssNm = [... new Set(SUBJECTS.map(s => s.totalPrfssNm))]
+    .filter(prfsnm => regex.test(prfsnm))
+    .sort((a,b) => {
+      const aIndex = a.indexOf(query);
+      const bIndex = b.indexOf(query);
+
+      return aIndex - bIndex;
+  });
 
   matchedSubNms.forEach(sbnm =>{
     const li = document.createElement('li');
 
-    const regex = new RegExp(`(${query})`, "gi");
     const highlighted = sbnm.replace(regex, `<span class="highlight">$1</span>`);
     li.innerHTML = highlighted;
 
@@ -938,10 +1024,25 @@ searchInput.addEventListener('input', () => {
     suggestList.appendChild(li);
   });
 
+  matchedPrfssNm.forEach(prfsnm =>{
+    const li = document.createElement('li');
+
+    const highlighted = prfsnm.replace(regex, `<span class="highlight2">$1</span>`);
+    li.innerHTML = highlighted;
+
+    li.addEventListener('click', () => {
+      searchInput.value = prfsnm;
+      suggestList.innerHTML = ``;
+
+      performSearch(prfsnm);
+    });
+
+    suggestList.appendChild(li);
+  });
+
 })
 
 function performSearch(query) {
-  console.log('검색 실행:', query);
   filters.sbjetNm = query;
   applyFilters();
 }
@@ -951,10 +1052,27 @@ overlapTimecheck.addEventListener('change',e=>{
   applyFilters();
 });
 
-/* init */
-loadSubjects();
-buildGrid();
 
+
+function addSubsFromLocalStorage() {
+  const subs = JSON.parse(localStorage.getItem('subjects'));
+  
+  subs.forEach(subId => {
+    SUBJECTS.some(sub => {
+      if(sub.crseNo == subId) {
+        createSubjectBlock(sub, false);
+        return false;
+      }
+    });
+  });
+}
+
+
+
+
+/* init */
+buildGrid();
+loadLectures().then(() => addSubsFromLocalStorage());
 
 
 
