@@ -92,7 +92,7 @@ const makeTimeNice = (realtimeinfo) => {
 
   arr.push('end');
   for(let i=0; i<arr.length-1; i++) {
-    if(arr[i].slice(10, 15) == arr[i+1].slice(2, 7)) {
+    if(arr[i].slice(10, 15) == arr[i+1].slice(2, 7)&&arr[i][0]==arr[i+1][0]) {
       tmpTime = tmpTime.slice(0, 10) + arr[i+1].slice(10, 15);
       continue;
     } else {

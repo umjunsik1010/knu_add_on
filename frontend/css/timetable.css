@@ -378,6 +378,15 @@ body{
   border-color: var(--primary, #2563eb);
 }
 
+#overlapTimeCheck{
+  margin:12px 15px;
+  
+}
+
+#overlapTimeCheck:hover ~ #overlapText{
+  display:flex;
+}
+
 
 
 
