@@ -115,7 +115,7 @@ app.post('/api/gehwek', async (req, res) => {
 
 
 app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../frontend/index.html'));
+  res.sendFile(path.resolve(__dirname, 'index.html'));
 });
 
 
