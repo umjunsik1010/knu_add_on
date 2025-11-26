@@ -25,15 +25,16 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 
 // 각 HTML 파일을 직접 라우팅
 app.get('/timetable', (req, res) =>
-  res.sendFile(path.join(__dirname, '../frontend', 'timetable.html'))
+  res.sendFile(path.join(__dirname, '../frontend/html', 'timetable.html'))
 );
 app.get('/gradecal', (req, res) =>
-  res.sendFile(path.join(__dirname, '../frontend', 'gradecal.html'))
+  res.sendFile(path.join(__dirname, '../frontend/html', 'gradecal.html'))
 );
 
 
 // load lectures
 let lecturesCache = null;
+let gradicalCache=null;
 
 async function loadLectures() {
   try {
@@ -43,11 +44,22 @@ async function loadLectures() {
     console.error('Failed to load lectures.json:', err);
   }
 }
-
+async function loadGradecal() {
+  try {
+    const data = await fs.readFile('./json/gradecal.json', 'utf-8');
+    gradecalCache = JSON.parse(data);
+  } catch (err) {
+    console.error('Failed to load lectures.json:', err);
+  }
+}
 loadLectures();
+loadGradecal();
 
 app.get('/api/lectures', (req, res) => {
   res.json(lecturesCache);
+});
+app.get('/api/gradecal', (req, res) => {
+  res.json(gradecalCache);
 });
 
 

@@ -196,6 +196,10 @@ const syllabusCloseBtn = document.getElementById('close-syllabus');
 const searchInput = document.getElementById('search-input');
 const overlapTimecheck = document.getElementById('overlapTimeCheck');
 const suggestList = document.getElementById('suggestion-list');
+const search=document.getElementById('search');
+const credit=document.getElementById('credit');
+const grade=document.getElementById('grade');
+const type=document.getElementById('type');
 
 syllabusCloseBtn.addEventListener('click', () => syllabus.classList.toggle('open'));
 
@@ -284,6 +288,42 @@ function renderSubjects(subjects) {
 let loadedCount = 0; // 현재 로드된 과목 수
 
 // 다음 과목 30개 렌더링
+function filterToggleColor(){
+  if(filters.sbjetNm.length>0){
+    search.style.backgroundColor="#3b82f6";
+    search.style.color="white";
+  }
+  else{
+    search.style.backgroundColor="#eee";
+    search.style.color="black";
+  }
+  if(filters.crdit.size > 0){
+    credit.style.backgroundColor="#3b82f6";
+    credit.style.color="white";
+  }
+  else{
+    credit.style.backgroundColor="#eee";
+    credit.style.color="black";
+  }
+  if(filters.estblGrade.size > 0){
+    grade.style.backgroundColor="#3b82f6";
+    grade.style.color="white";
+  }
+  else{
+    grade.style.backgroundColor="#eee";
+    grade.style.color="black";
+  }
+  if(filters.sbjetSctnm.size > 0){
+    type.style.backgroundColor="#3b82f6";
+    type.style.color="white";
+  }
+  else{
+    type.style.backgroundColor="#eee";
+    type.style.color="black";
+  }
+  
+}
+
 function renderNextSubjects() {
   let sub;
 
@@ -292,9 +332,7 @@ function renderNextSubjects() {
   } else {
     sub = SUBJECTS;
   }
-
   const nextBatch = sub.slice(loadedCount, loadedCount + LOAD_STEP);
-
   nextBatch.forEach(s => {
     const card = document.createElement('div');
     card.className = 'subject-card';
@@ -518,9 +556,13 @@ document.querySelectorAll('.filter-options .chip').forEach(chip => {
     if (key === 'estblDprtnNm') {
       filters.estblDprtnNm = (filters.estblDprtnNm === value) ? '' : value;
       document.querySelectorAll('[data-estbl-dprtn-nm]').forEach(c => c.classList.remove('active'));
-      if (filters.estblDprtnNm) chip.classList.add('active');
+      if (filters.estblDprtnNm) {
+        chip.classList.add('active');
       // 원래 전공 검색인데 지금 안 씀, 추후 작성하기
-      else chip.classList.remove('active');
+      }
+      else {
+        chip.classList.remove('active');
+      }
     } else if (key === 'crdit') {
       if (filters.crdit.has(value)) {
         filters.crdit.delete(value);
@@ -545,7 +587,8 @@ document.querySelectorAll('.filter-options .chip').forEach(chip => {
         filters.sbjetSctnm.add(value);
         chip.classList.add('active');
       }
-    } 
+    }
+    filterToggleColor();
     applyFilters();
   });
 });
@@ -965,6 +1008,7 @@ searchInput.addEventListener('keydown', (e) => {
     if (query) performSearch(query);
     else {
       filters.sbjetNm = '';
+      filterToggleColor();
       applyFilters();
     }
   }
@@ -973,6 +1017,7 @@ searchInput.addEventListener('keydown', (e) => {
 // 검색어 초기화
 searchInput.addEventListener('search', () => {
   filters.sbjetNm = '';
+  filterToggleColor();
   applyFilters();
 });
 
@@ -1044,6 +1089,7 @@ searchInput.addEventListener('input', () => {
 
 function performSearch(query) {
   filters.sbjetNm = query;
+  filterToggleColor();
   applyFilters();
 }
 

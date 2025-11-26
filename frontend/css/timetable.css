@@ -332,7 +332,7 @@ body{
 }
 
 .filter-toggle {
-  padding: 6px 12px;
+  padding: 6px 10px;
   font-size: 14px;
   border: 1px solid var(--border);
   background: #f1eded;
@@ -379,12 +379,23 @@ body{
 }
 
 #overlapTimeCheck{
-  margin:12px 15px;
+  display:none;
   
 }
 
-#overlapTimeCheck:hover ~ #overlapText{
-  display:flex;
+#overlapTimeCheck+label{
+  display:inline-block;
+  padding: 6px 10px;      /* 내부 여백 (상하, 좌우) */
+  background-color: #eee;    /* 기본 배경색 (회색) */
+  border-radius: 6px;        /* 모서리 둥글게 */
+  cursor: pointer;           /* 마우스 올리면 손가락 모양 */
+  font-size:14px ;
+  /* transition: 0.3s;          부드러운 색상 전환 */
+  user-select: none;
+}
+#overlapTimeCheck:checked + label{
+  background-color: var(--accent); /* 체크 시 배경색 (예: 붉은색) */
+  color: white;
 }
 
 
@@ -489,6 +500,7 @@ body{
 /* 시간표에 박힐 수업 블록 */
 .subject-block {
   color:white;
+  padding:5px;
   background: linear-gradient(45deg, rgba(80, 133, 0, 0.5), rgba(143, 199, 255, 0.5));
   background-size: 160% 160%;
   border-radius:12px;

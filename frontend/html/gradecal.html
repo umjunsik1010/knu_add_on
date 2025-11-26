@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sooming</title>
+    <link rel="stylesheet" href="css/gradecal.css"/>
+</head>
+<body>
+    <div class="topbar">
+    <div class="topleft"></div>
+    <div style="flex:1"></div>
+    <div class="controls">
+      <div style="color:rgba(255, 255, 255, 0.9);font-weight:600">
+        즐거운 경북대학교
+      </div>
+    </div>
+  </div>
+  <button class="sidebar-toggle" id="openSidebar">☰</button>
+
+    <div class="center">
+        <div class="title-text">
+            졸업 요건 확인
+        </div>
+
+    <div class="input-group">
+        <select id="admissionYear">
+          <option value="">입학년도 선택</option>
+        </select>
+      </div>
+    <div class="input-box">
+    <div id="inputContainer">
+      <div class="input-group-row">
+        <div class="input-group">
+          <select id="major1">
+            <option value="">대학 선택</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <select id="major2">
+            <option value="">전공 선택</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="input-group-row">
+        <div class="input-group">
+          <input type="number" id="majorCredit" placeholder="전공학점" min="0">
+        </div>
+        <div class="input-group">
+          <input type="number" id="liberalCredit" placeholder="교양학점" min="0">
+        </div>
+      </div>
+
+      <button id="submitBtn">완료</button>
+    </div>
+
+    <div id="resultBox" style="display: none;">
+      <div class="result-text">여기에 결과가 뜰 예정</div>
+    </div>
+    </div>
+
+  <script src="js/gradecal.js"></script>
+</body>
+</html>

@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>메인 페이지</title>
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="css/main.css">
 </head>
+
 <body>
 
     <header class="header">
         <img src="img/logo-w.svg" alt="경북대학교 로고" class="logo">
         <h1 class="hero-title">경북대학교 <span id="Add-on">Add-on</span></h1>
-        
+
     </header>
 
     <main class="hero">
@@ -20,23 +25,38 @@
         <!-- 오른쪽 카드 박스 -->
         <div class="hero-right">
             <a href="/timetable" class="menu-card">
-                <h2>시간표</h2>
-                <p>이번 학기 수업을 한눈에 확인해보세요</p>
+                <div class="card-icon">
+                    <i class="ph ph-calendar-check"></i>
+                </div>
+                <div class="card-content">
+                    <h2>시간표</h2>
+                    <p>이번 학기 수업을 한눈에 확인해보세요</p>
+                </div>
             </a>
 
             <a href="/gradecal" class="menu-card">
-                <h2>학점/성적 계산기</h2>
-                <p>졸업 학점과 성적을 확인해보세요</p>
+                <div class="card-icon">
+                    <i class="ph ph-calculator"></i>
+                </div>
+                <div class="card-content">
+                    <h2>학점/성적 계산기</h2>
+                    <p>졸업 학점과 성적을 확인해보세요</p>
+                </div>
             </a>
 
             <a href="/gradecal" class="menu-card">
-                <h2>수강신청 연습</h2>
-                <p>수강신청 과정을 실제와 유사하게 연습해보세요</p>
+                <div class="card-icon">
+                    <i class="ph ph-mouse-left-click"></i>
+                </div>
+                <div class="card-content">
+                    <h2>수강신청 연습</h2>
+                    <p>수강신청 과정을 실제와 유사하게 연습해보세요</p>
+                </div>
             </a>
         </div>
 
     </main>
 
 </body>
-</html>
 
+</html>
