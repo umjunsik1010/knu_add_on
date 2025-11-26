@@ -131,14 +131,10 @@ document.addEventListener('DOMContentLoaded', function() {
         years.forEach(year => {
             const option = new Option(year, year);
             yearSelect.add(option);
-            option.style.borderRadius='8px';
         });
         
-        univSelect.disabled = false;
-        deptSelect.disabled = false;
-
-        univSelect.classList.add('locked');
-        deptSelect.classList.add('locked');
+        univSelect.disabled = true;
+        deptSelect.disabled = true;
 
         univSelect.classList.remove('has-value');
         deptSelect.classList.remove('has-value');
@@ -147,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
         resultBox.style.display = 'none';
     }
 
-    // --- 이벤트 리스너 ---
+    // --- 이벤트 리스너 (변경 없음) ---
 
     // 대학 선택 시 (특수 요건을 결과 계산 시에만 표시하도록 변경했으므로, 대학 선택 시에는 결과 박스만 숨깁니다.)
     univSelect.addEventListener('change', function() {
@@ -181,43 +177,6 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleInputStyle(this); 
         resultBox.style.display = 'none';
     });
-    // 입학년도 먼저 입력 부탁드립니다.
-    // 공통으로 사용할 잠금 확인 함수
-    function checkLocked(e) {
-        // 만약 yearSelect에 값이 없다면 (아직 입학년도 선택 안 함)
-        if (yearSelect.value === "") {
-            e.preventDefault(); // 드롭다운이 열리는 것을 막음 (핵심!)
-            this.blur();        // 포커스를 해제해서 깜빡임 방지
-            alert("입학년도를 먼저 선택해주세요"); // 알림창 띄우기
-            return false;
-        }
-    }
-
-    // 대학 선택창을 누를 때 검사
-    univSelect.addEventListener('mousedown', checkLocked);
-
-    // 전공 선택창을 누를 때 검사
-    deptSelect.addEventListener('mousedown', checkLocked);
-    
-    // 학점 입력시 음수 일때 alert
-    
-    function handleCreditInput(element) {
-        // 1. 음수 입력 방지 로직
-        if (element.value < 0) {
-            element.value = 0; // 음수면 강제로 0으로 변경
-            alert("올바른 학점을 입력해주세요"); // (선택사항) 사용자에게 알림
-        }
-        toggleInputStyle(element);
-        resultBox.style.display = 'none';
-    }
-
-    majorCreditInput.addEventListener('input', function() { 
-        handleCreditInput(this);
-    });
-
-    liberalCreditInput.addEventListener('input', function() { 
-        handleCreditInput(this);
-    });
 
     // 5. 완료 버튼 클릭 이벤트 
     submitBtn.addEventListener('click', function() {
@@ -226,8 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function updateUniversityOptions(selectedYear) {
         deptSelect.innerHTML = '<option value="">전공 선택</option>';
-
-        deptSelect.classList.add('locked');
+        deptSelect.disabled = true;
         deptSelect.classList.remove('has-value');
         
         univSelect.innerHTML = '<option value="">대학 선택</option>';
@@ -240,9 +198,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const option = new Option(univ, univ);
                 univSelect.add(option);
             });
-            univSelect.classList.remove('locked');
+            univSelect.disabled = false;
         } else {
-            univSelect.classList.add('locked');
+            univSelect.disabled = true;
         }
     }
 
@@ -279,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- 핵심 로직: 결과 출력 함수 (특수 요건을 결과 HTML에 통합) ---
+    // --- 핵심 로직: 결과 출력 함수 (수정됨) ---
     function calculateAndDisplayResult() {
         const year = yearSelect.value;
         const univ = univSelect.value;
@@ -353,6 +311,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const remainingLiberal = Math.max(0, requiredLiberal - currentLiberalCredit);
         const totalCurrent = currentMajorCredit + currentLiberalCredit;
         const totalRemaining = Math.max(0, requiredTotal - totalCurrent); 
+        
+        // 전공/교양 학점 요건 충족 여부 판단 로직 (요청 사항 반영)
+        const isCreditSatisfied = (remainingMajor === 0 && remainingLiberal === 0);
+        
+        // 최종 메시지 결정
+        let finalMessage;
+        let finalMessageColor;
+        
+        if (isCreditSatisfied) {
+            // 전공과 교양 학점을 모두 충족했을 때 (총 학점은 이미 전공+교양에 포함됨)
+            finalMessage = '🎉 졸업 요건을 충족하셨습니다! (단, 특수 및 세부 요건은 별도 확인 필요합니다)';
+            finalMessageColor = '#10b981'; // green
+        } else {
+            // 전공 또는 교양 학점 중 하나라도 부족할 때
+            finalMessage = '⚠️ 전공 또는 교양 학점 요건을 충족하지 못하였습니다. (특수 및 세부 요건을 반드시 확인하세요!)';
+            finalMessageColor = '#ef4444'; // red
+        }
+
 
         // 4. 결과 HTML 생성
         let htmlContent = `
@@ -397,8 +373,8 @@ document.addEventListener('DOMContentLoaded', function() {
             <div style="font-size: 1.2rem; font-weight: 700; margin-top: 15px; padding-top: 10px; border-top: 2px solid var(--accent-dark);">
                 총 부족 학점: <span style="color: ${totalRemaining > 0 ? '#ef4444' : '#10b981'};">${totalRemaining} 학점</span>
             </div>
-            <p style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 15px; color: ${totalRemaining > 0 ? '#ef4444' : '#10b981'}; font-weight: 700;">
-                ${totalRemaining > 0 ? '⚠️ 아직 졸업까지 들어야 할 학점이 남았습니다. 힘내세요! (특수 및 세부 요건을 반드시 확인하세요!)' : '🎉 졸업 요건을 충족하셨습니다! (단, 특수 및 세부 요건은 별도 확인 필요합니다)'}
+            <p style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 15px; color: ${finalMessageColor}; font-weight: 700;">
+                ${finalMessage}
             </p>
         `;
 

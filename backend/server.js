@@ -19,20 +19,20 @@ app.use(express.urlencoded({extended:true}));
 
 
 // 정적 파일 제공 (HTML, CSS, JS)
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname, '/frontend/')));
 
 
 
 
 // 각 HTML 파일을 직접 라우팅
 app.get('/timetable', (req, res) =>
-  res.sendFile(path.join(__dirname, '../frontend/html', 'timetable.html'))
+  res.sendFile(path.join(__dirname, '/frontend/html', 'timetable.html'))
 );
 app.get('/gradecal', (req, res) =>
-  res.sendFile(path.join(__dirname, '../frontend/html', 'gradecal.html'))
+  res.sendFile(path.join(__dirname, '/frontend/html', 'gradecal.html'))
 );
 app.get('/sugang', (req, res) =>
-  res.sendFile(path.join(__dirname, '../frontend/html', 'sugangtraining.html'))
+  res.sendFile(path.join(__dirname, '/frontend/html', 'sugangtraining.html'))
 );
 
 
