@@ -39,6 +39,7 @@ app.get('/sugang', (req, res) =>
 
 // load lectures
 let lecturesCache = null;
+let gradicalCache=null;
 
 async function loadLectures() {
   try {
@@ -48,11 +49,22 @@ async function loadLectures() {
     console.error('Failed to load lectures.json:', err);
   }
 }
-
+async function loadGradecal() {
+  try {
+    const data = await fs.readFile('./json/gradecal.json', 'utf-8');
+    gradecalCache = JSON.parse(data);
+  } catch (err) {
+    console.error('Failed to load lectures.json:', err);
+  }
+}
 loadLectures();
+loadGradecal();
 
 app.get('/api/lectures', (req, res) => {
   res.json(lecturesCache);
+});
+app.get('/api/gradecal', (req, res) => {
+  res.json(gradecalCache);
 });
 
 

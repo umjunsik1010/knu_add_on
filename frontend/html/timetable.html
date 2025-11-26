@@ -27,7 +27,7 @@
     <div id="filterBar">
       <!-- 과목 이름 -->
       <div class="filter-section">
-        <button class="filter-toggle">검색 ▾</button>
+        <button class="filter-toggle" id="search">검색 ▾</button>
         <div class="filter-options">
           <input id="search-input" class="search-input" type="search" placeholder="과목을 입력하고 enter키로 검색하세요." autocomplete="off" />
           <ul id="suggestion-list"></ul>
@@ -36,7 +36,7 @@
 
       <!-- 학점 -->
       <div class="filter-section">
-        <button class="filter-toggle">학점 ▾</button>
+        <button class="filter-toggle" id="credit">학점 ▾</button>
         <div class="filter-options">
           <button class="chip" data-crdit="1">1학점</button>
           <button class="chip" data-crdit="2">2학점</button>
@@ -49,7 +49,7 @@
 
       <!-- 학년 -->
       <div class = "filter-section">
-        <button class="filter-toggle">학년 ▾</button>
+        <button class="filter-toggle" id="grade">학년 ▾</button>
         <div class="filter-options">
           <button class="chip" data-estbl-grade="1">1학년</button>
           <button class="chip" data-estbl-grade="2">2학년</button>
@@ -63,7 +63,7 @@
 
       <!-- 종류 -->
       <div class = "filter-section">
-        <button class="filter-toggle">종류 ▾</button>
+        <button class="filter-toggle" id="type">종류 ▾</button>
         <div class="filter-options">
           <button class="chip" data-sbjet-sctnm="전공">전공</button>
           <button class="chip" data-sbjet-sctnm="교양">교양</button>
@@ -83,6 +83,7 @@
 
       <div class = "filter-section">
         <input type="checkbox" id="overlapTimeCheck">
+        <label for="overlapTimeCheck">빈 시간 표시</label>
       </div>
 
     </div>
