@@ -8,7 +8,7 @@ const fs = require('fs/promises');
 
 const app = express();
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // CORS 설정 - 모두 개방
 app.use(cors());
@@ -23,13 +23,18 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 
 
 
+
 // 각 HTML 파일을 직접 라우팅
 app.get('/timetable', (req, res) =>
-  res.sendFile(path.join(__dirname, '../frontend', 'timetable.html'))
+  res.sendFile(path.join(__dirname, '../frontend/html', 'timetable.html'))
 );
 app.get('/gradecal', (req, res) =>
-  res.sendFile(path.join(__dirname, '../frontend', 'gradecal.html'))
+  res.sendFile(path.join(__dirname, '../frontend/html', 'gradecal.html'))
 );
+app.get('/sugang', (req, res) =>
+  res.sendFile(path.join(__dirname, '../frontend/html', 'sugangtraining.html'))
+);
+
 
 
 // load lectures
@@ -92,6 +97,13 @@ app.post('/api/gehwek', async (req, res) => {
         console.error(err);
         res.status(500).json({ error: 'Failed to fetch gehwek' });
     }
+});
+
+
+
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
 });
 
 

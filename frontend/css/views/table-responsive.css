@@ -1,0 +1,326 @@
+@charset "utf-8";
+/* CSS Document */
+
+/* b-table-box */
+.b-table-box {
+    margin-bottom: 1rem;
+    border-top: 1px solid #243352;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.b-table-box .b-row-box {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+.b-table-box .b-row-item {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+    min-height: 36px;
+    border-bottom: 1px solid #dee2e6;
+}
+@media(max-width: 320px) {
+    .b-table-box .b-row-item:last-child {
+        border-bottom: none;
+    }
+}
+
+.b-table-box .b-title-box {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 120px;
+    flex: 0 0 120px;
+    max-width: 120px;
+    padding: 0.25rem 0.75rem;
+    padding-right: 10px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    background: #f2f4f6;
+    font-weight: 500;
+    line-height: 1.2;
+    text-align: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: ce;
+    justify-content: center;
+}
+
+.b-table-box .b-title-box label {
+    margin-bottom: 0;
+    word-break: keep-all;
+    line-height: 1.4;
+}
+.b-table-box .b-title-box label,
+.b-table-box .b-title-box small {
+    line-height: 1.2;
+}
+
+.b-table-box .b-title-box label.req::before, label.req::before, th.req nobr::before {
+    content: "*";
+    display: inline-block;
+    width: 10px;
+    margin-right: 2px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #ff0000;
+}
+
+.b-table-box .b-con-box {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 100%;
+    padding: 0.25rem 0.75rem;
+    word-break: break-all;
+}
+
+.b-table-box .b-con-box.text-left {
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+}
+
+.b-table-box .b-con-box.text-center {
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+.b-table-box .b-con-box.text-right {
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+}
+
+.b-table-box .form-group {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-right: 0;
+}
+
+.b-table-box .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.b-table-box .form-group-inline {
+    margin-right: 5px;
+    width: auto;
+}
+
+.b-table-box .form-control, .b-table-box .w2inputCalendar_div, .b-table-box .w2spinner {
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.b-table-box .form-w-auto, .b-table-box .form-w-xs, .b-table-box .form-w-sm, .b-table-box .form-w-md, .b-table-box .form-w-lg, .b-table-box .form-w-xl {
+    width: 100%
+}
+
+@media (min-width: 768px) {
+    .b-table-box .form-group {
+        margin-right: 5px;
+    }
+
+    .b-table-box .b-row-item {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 50%;
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    /* flex-col-1 */
+    .flex-col-1 .b-row-item {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* flex-col-2 */
+    .b-table-box .b-row-item.merge-2, .flex-col-2 .b-row-item.merge-2 {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* flex-col-3 */
+    .flex-col-3 .b-row-item:last-child, .flex-col-3 .b-row-item.merge-2, .flex-col-3 .b-row-item.merge-prev {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* flex-col-4 */
+    .flex-col-4 .b-row-item.merge-2, .flex-col-4 .b-row-item.merge-3, .flex-col-4 .b-row-item.merge-4, .flex-col-4 .b-row-item.merge-prev, .flex-col-4 .b-row-item.merge-next, .flex-col-4 .b-row-item.merge-3 + .b-row-item {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* flex-col-5 - 학번/성명, 소속/수강신청가능학점을 2열로, 마지막은 전체 너비 */
+    .flex-col-5 .b-row-item:nth-child(1),
+    .flex-col-5 .b-row-item:nth-child(2),
+    .flex-col-5 .b-row-item:nth-child(3),
+    .flex-col-5 .b-row-item:nth-child(4) {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 50%;
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .flex-col-5 .b-row-item:last-child {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .b-table-box .form-w-auto {
+        width: auto
+    }
+
+    .b-table-box .form-w-xs {
+        width: 30px;
+    }
+
+    .b-table-box .form-w-sm {
+        width: 60px;
+    }
+
+    .b-table-box .form-w-md {
+        width: 90px;
+    }
+
+    .b-table-box .form-w-lg {
+        width: 110px;
+    }
+
+    .b-table-box .form-w-xl {
+        width: 140px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .b-table-box .b-row-item {
+        min-height: 44px;
+    }
+
+    .b-table-box .b-title-box {
+        padding: 0.25rem 0.5rem;
+    }
+
+    .b-table-box .b-con-box {
+        padding: 0.25rem 0.5rem;
+    }
+
+    /* flex-col-3 */
+    .flex-col-3 .b-row-item, .flex-col-3 .b-row-item:last-child, .flex-col-3 .b-row-item.merge-prev {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 33.333333%;
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .flex-col-3 .b-row-item.merge-2 {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 66.666666%;
+        flex: 0 0 66.666666%;
+        max-width: 66.666666%
+    }
+
+    .flex-col-3 .b-row-item.merge-3 {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%
+    }
+}
+
+@media (min-width: 1600px) {
+
+    /* flex-col-4 */
+    .flex-col-4 .b-row-item, .flex-col-4 .b-row-item.merge-prev, .flex-col-4 .b-row-item.merge-next, .flex-col-4 .b-row-item.merge-3 + .b-row-item {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 25%;
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+
+    .flex-col-4 .b-row-item.merge-2 {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 50%;
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .flex-col-4 .b-row-item.merge-3 {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 75%;
+        flex: 0 0 75%;
+        max-width: 75%;
+    }
+
+    /* flex-col-5 - 학번/성명, 소속/수강신청가능학점을 2열로, 마지막은 전체 너비 */
+    .flex-col-5 .b-row-item:nth-child(1),
+    .flex-col-5 .b-row-item:nth-child(2),
+    .flex-col-5 .b-row-item:nth-child(3),
+    .flex-col-5 .b-row-item:nth-child(4) {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 50%;
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .flex-col-5 .b-row-item:last-child {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 1800px) {
+    /* flex-col-5 - 학번/성명, 소속/수강신청가능학점을 2열로, 마지막은 전체 너비 */
+    .flex-col-5 .b-row-item:nth-child(1),
+    .flex-col-5 .b-row-item:nth-child(2),
+    .flex-col-5 .b-row-item:nth-child(3),
+    .flex-col-5 .b-row-item:nth-child(4) {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 50%;
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .flex-col-5 .b-row-item:last-child {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
