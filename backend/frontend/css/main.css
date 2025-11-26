@@ -23,7 +23,6 @@ body {
     font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
     background-color: #f3f4f6;
     color: var(--text-main);
-    overflow: hidden;
 }
 
 /* 상단 로고 */
@@ -39,7 +38,6 @@ body {
     align-items: center;
     justify-content: space-between;
 }
-
 .logo {
     height: 36px;
     object-fit: contain;
@@ -73,7 +71,7 @@ body {
     overflow: hidden;
 
     /* ▣ 경북대학교 배경 사진 */
-    background: url("../img/knu_bg.png") center/cover no-repeat;
+    background: url("../img/knu_bg.webp") center/cover no-repeat;
 }
 
 /* ▣ 배경 어둡게 오버레이 + 그라디언트 */
@@ -103,6 +101,12 @@ body {
     padding: 0 20px;
     flex-wrap: wrap;
 }
+@media (max-width: 768px) {
+  .hero-right {
+    flex-direction: column;
+  }
+}
+
 
 /* 카드 디자인 */
 .menu-card {
@@ -204,12 +208,13 @@ body {
 /* 반응형 */
 @media (max-width: 1024px) {
     .hero-right {
+        flex-direction: column;
         gap: 20px;
     }
 
     .menu-card {
-        width: 280px;
-        height: 340px;
+        width: 500px;
+        height: 280px;
     }
 }
 
@@ -219,12 +224,19 @@ body {
         min-height: 100vh;
         padding: 100px 0 40px;
     }
-
+    .header {
+        padding: 12px 20px;
+    }
+    .logo {
+        height: 20px; 
+    }
     .hero-right {
         flex-direction: column;
         gap: 24px;
     }
-
+    .hero-title {
+        font-size: 1rem;
+    }
     .menu-card {
         width: 100%;
         max-width: 340px;
