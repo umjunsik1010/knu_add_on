@@ -4,13 +4,14 @@
   --muted:#6b7280;
   --bg:#ffffff;
   --sidebar-width:33vw;
-  --timetable-width:900px;
+  --timetable-width:1300px;
   --hours-start:8; /* 08:00 */
   --hours-end:24;  /* 24:00 */
 }
 
 html,body{
-  height:100%;
+  height:auto;
+  /* width: auto; */
   margin:0;
   min-width:var(--timetable-width);
   overflow-x:auto;
@@ -200,13 +201,17 @@ a {
   transform:translateX(0);
   transition:transform .36s cubic-bezier(.2,.9,.2,1);
   /* min-width:calc(var(--timetable-width) + 80px); */
+
+  width: 100%;
+  overflow-x: auto;
+  flex-shrink: 0;
 }
 .timetable-wrap.open{transform:translateX(20%)}
 .timetable{
   display:grid;
   grid-template-columns:80px repeat(6,1fr);
   border-radius:8px;
-  overflow:hidden;
+  /* overflow:hidden; */
   position:relative;
   background:linear-gradient(180deg,#fff,#ffffffac);
 }
