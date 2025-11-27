@@ -25,6 +25,10 @@ app.use(express.static(path.join(__dirname, '/frontend/')));
 
 
 // 각 HTML 파일을 직접 라우팅
+
+app.get('/',(req,res)=>
+  res.sendFile(path.join(__dirname,'index.html'))
+);
 app.get('/timetable', (req, res) =>
   res.sendFile(path.join(__dirname, '/frontend/html', 'timetable.html'))
 );

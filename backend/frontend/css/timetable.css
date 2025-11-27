@@ -22,7 +22,10 @@ body{
   font-family: sans-serif;
   color:#111
 }
-
+a {
+  text-decoration: none; 
+  color: inherit; 
+}
 /* Top colored bar */
 .topbar{
   height:64px;
