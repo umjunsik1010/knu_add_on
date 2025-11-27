@@ -125,7 +125,7 @@ app.get('/', (req, res) => {
 
 
 // 서버 실행
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
 
