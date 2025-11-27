@@ -43,7 +43,7 @@ app.get('/sugang', (req, res) =>
 
 // load lectures
 let lecturesCache = null;
-let gradicalCache=null;
+let gradecalCache=null;
 
 async function loadLectures() {
   try {
