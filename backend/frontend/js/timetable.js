@@ -208,12 +208,28 @@ syllabusCloseBtn.addEventListener('click', () => syllabus.classList.toggle('open
 
 // 사진으로 저장 버튼
 saveBtn.addEventListener('click', () => {
-  html2canvas(document.querySelector("#timetable")).then(canvas => {
+  const blocks = document.querySelectorAll(".subject-block");
+  blocks.forEach(b => {
+    b.style.animation = "none";   // 애니메이션 제거
+    b.style.opacity = "1";
+  });
+
+  html2canvas(document.querySelector("#timetable"), {
+    useCORS: true,
+    windowWidth: document.querySelector("#timetable").scrollWidth,
+    windowHeight: document.querySelector("#timetable").scrollHeight,
+    width: document.querySelector("#timetable").scrollWidth,
+    height: document.querySelector("#timetable").scrollHeight
+  }).then(canvas => {
     const link = document.createElement("a");
     link.download = "timetable.png";
     link.href = canvas.toDataURL();
-    setTimeout(() => link.click(), 200);
+    setTimeout(() => link.click(), 400);
   });
+
+  // requestAnimationFrame(() => {
+  //     blocks.forEach(b => b.style.animation = "");
+  // });
 });
 
 // 시간표 초기화 버튼
