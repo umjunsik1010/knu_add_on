@@ -247,3 +247,26 @@ a {
   margin-bottom: 20px;
 }
 
+@media (max-width: 768px) {
+    /* 입력 폼 전체 및 개별 요소의 너비 조정 */
+    .input-box, 
+    .input-group input, 
+    .input-group select, 
+    #submitBtn {
+      width: 90vw; /* 뷰포트 너비의 90% 사용 */
+      max-width: 500px; 
+    }
+    
+    /* 입력 그룹의 행(row) 너비 조정 */
+    .input-group-row {
+      width: 90vw; 
+      max-width: 500px;
+    }
+    
+    /* 결과 박스 너비 조정 */
+    #resultBox {
+      width: 95vw; /* 뷰포트 너비의 95%로 조정 */
+      max-width: 700px;
+      padding: 20px; /* 모바일에서 내부 여백 줄이기 */
+    }
+}
