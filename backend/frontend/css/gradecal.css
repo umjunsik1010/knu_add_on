@@ -6,14 +6,20 @@
   --sidebar-width:33vw;
   --hours-start:8; /* 08:00 */
   --hours-end:24;  /* 24:00 */
+  /* --timetable-width 변수는 다른 파일에서 정의되었거나 사용되지 않는 경우, 여기서는 그대로 둡니다. */
 }
 
 html,body{
   height:100%;
   margin:0;
-  min-width:var(--timetable-width);
-  overflow-x:auto;
-  min-width:calc(var(--timetable-width) + 120px);
+  
+  /* [수정 부분 1]: 아래 두 줄의 min-width 설정을 제거하거나 주석 처리합니다. */
+  /* min-width:var(--timetable-width); */
+  /* min-width:calc(var(--timetable-width) + 120px); */
+
+  /* [수정 부분 2]: 가로 스크롤을 방지하고 싶다면 overflow-x:auto 대신 hidden을 사용하거나 아예 제거합니다. */
+  overflow-x:hidden; 
+  
   font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial
 }
 body{
@@ -176,7 +182,7 @@ a {
 /* 클릭은 되지만 회색으로 보여서 비활성화된 느낌을 주는 클래스 */
 .locked {
     background-color: #e9ecef; /* 회색 배경 */
-    color: #6c757d;            /* 회색 글자 */
+    color: #6c757d;           /* 회색 글자 */
     pointer-events: auto;      /* 클릭 이벤트 허용 (중요!) */
 }
 
@@ -240,3 +246,4 @@ a {
   font-weight: 700;
   margin-bottom: 20px;
 }
+
